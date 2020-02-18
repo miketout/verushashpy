@@ -1,5 +1,5 @@
-VerusHas Module in C++
-======================
+VerusHash Module in C++
+=======================
 
 An example project built with [pybind11](https://github.com/pybind/pybind11).
 
