@@ -1,7 +1,7 @@
 VerusHash Module in C++
 =======================
 
-An example project built with [pybind11](https://github.com/pybind/pybind11).
+A native VerusHash module that supports VerusHash from V1 to V2.1
 
 Installation (requires Python 3.5+)
 -----------------------------------
