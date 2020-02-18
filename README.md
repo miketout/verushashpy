@@ -6,6 +6,9 @@ A native VerusHash module that supports VerusHash from V1 to V2.1
 Installation (requires Python 3.5+)
 -----------------------------------
 
+NOTE: Installation currently requires cloning the pybind11 repo as well and running: "python setup.py install" in the 
+pybind11 directory before installing this module in order to access the pybind11 header files.
+
 **On Unix (Linux, OS X)**
 
  - clone this repository
