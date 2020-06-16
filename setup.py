@@ -3,7 +3,7 @@ from setuptools.command.build_ext import build_ext
 import sys
 import setuptools
 
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 
 
 class get_pybind_include(object):
@@ -24,13 +24,20 @@ class get_pybind_include(object):
 ext_modules = [
     Extension(
         'verushash',
-        ['src/crypto/haraka.c',
+        ['src/compat/glibc_compat.cpp',
+         'src/compat/glibc_sanity.cpp',
+         'src/compat/glibcxx_sanity.cpp',
+         'src/compat/strnlen.cpp',
          'src/crypto/haraka_portable.c',
+         'src/crypto/ripemd160.cpp',
+         'src/crypto/sha256.cpp',
          'src/crypto/uint256.cpp',
          'src/crypto/utilstrencodings.cpp',
          'src/crypto/verus_hash.cpp',
          'src/crypto/verus_clhash.cpp',
          'src/crypto/verus_clhash_portable.cpp',
+         'src/support/cleanse.cpp',
+         'src/blockhash.cpp',
          'src/main.cpp'],
         include_dirs=[
             # Path to pybind11 headers
@@ -117,7 +124,7 @@ setup(
     author_email='',
     url='https://github.com/miketout/verushashpy',
     description='Native Verus Hash module for Python',
-    long_description='A Verus Hash module supporting VerusHash 1.0 - 2.1, written in C++',
+    long_description='A Verus Hash module supporting VerusHash 1.0 - 2.2, written in C++',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.4'],
     setup_requires=['pybind11>=2.4'],

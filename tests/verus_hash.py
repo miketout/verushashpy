@@ -1074,6 +1074,10 @@ def main():
     print("= NATIVE verus_hash v2.1 on test data 29674026732870ff73268723987349028fb9901270ff73268723987349028fb990128fb99012752a9b765628749812 - output = ")
     print(ps(op) + "\n")
 
+    op = vh.verushash_v2b2(bytes(vh2_testdata))
+    print("= NATIVE verus_hash v2.2 on test data 29674026732870ff73268723987349028fb9901270ff73268723987349028fb990128fb99012752a9b765628749812 - output = ")
+    print(ps(op) + "\n")
+
     # block test
     print("= test_header - expected hash =")
     print(test_verusv2_expected)
