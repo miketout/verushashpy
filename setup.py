@@ -45,6 +45,9 @@ ext_modules = [
             get_pybind_include(),
             get_pybind_include(user=True)
         ],
+        extra_objects=[
+            'libs/libsodium.so'
+        ],
         language='c++'
     ),
 ]
@@ -133,3 +136,17 @@ setup(
     cmdclass={'build_ext': BuildExt},
     zip_safe=False,
 )
+
+
+static_libraries = ['igraph']
+static_lib_dir = '/system/lib'
+libraries = ['z', 'xml2', 'gmp']
+library_dirs = ['/system/lib', '/system/lib64']
+
+if sys.platform == 'win32':
+    libraries.extend(static_libraries)
+    library_dirs.append(static_lib_dir)
+    extra_objects = []
+else: # POSIX
+    extra_objects = ['{}/lib{}.a'.format(static_lib_dir, l) for l in static_libraries]
+

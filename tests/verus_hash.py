@@ -1105,7 +1105,7 @@ def main():
     test_buf = finalizehash2b(test_key, test_buf)
     print("= finalize2b complete - output = ")
     print(" expected: 73729aa8e3385c68ac707950256ff4d5f0ee4c40a669ef249ed05832976a74bb")
-    print("hashbytes: ", ps(test_buf), "\n")
+    print("hashbytes:", ps(test_buf), "\n")
 
     # print input
     print("= input bytes =")
