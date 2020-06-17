@@ -46,8 +46,7 @@ ext_modules = [
             get_pybind_include(user=True)
         ],
         extra_objects=[
-            #'libs/libsodium.so'
-            '/usr/lib/x86_64-linux-gnu/libsodium.so'
+            'libs/libsodium.so'
         ],
         language='c++'
     ),
