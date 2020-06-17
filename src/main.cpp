@@ -7,6 +7,7 @@
 
 #include "crypto/verus_hash.h"
 #include "solutiondata.h"
+#include "sodium.h"
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
@@ -17,8 +18,10 @@ void initialize()
 {
     if (!initialized)
     {
+        sodium_init();
         CVerusHash::init();
         CVerusHashV2::init();
+
     }
     initialized = true;
 }

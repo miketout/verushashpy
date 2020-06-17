@@ -10,7 +10,7 @@
 #include "crypto/sha256.h"
 #include "crypto/verus_hash.h"
 #include "crypto/uint256.h"
-#include "crypto/sodium.h"
+#include "sodium.h"
 #include "prevector.h"
 #include "serialize.h"
 #include <vector>
