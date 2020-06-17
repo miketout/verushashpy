@@ -7,7 +7,7 @@
 #include "solutiondata.h"
 
 CActivationHeight CConstVerusSolutionVector::activationHeight;
-uint160 ASSETCHAINS_CHAINID = uint160(ParseHex("4c6c9b5a9f7f31d8ea604cb49ad3645c01b8f51a"));
+uint160 ASSETCHAINS_CHAINID = uint160(ParseHex("1af5b8015c64d39ab44c60ead8317f9f5a9b6c4c"));
 
 [[noreturn]] void new_handler_terminate()
 {
@@ -29,6 +29,7 @@ bool CBlockHeader::CheckNonCanonicalData() const
     CPBaaSPreHeader pbph(*this);
     CPBaaSBlockHeader pbbh1 = CPBaaSBlockHeader(ASSETCHAINS_CHAINID, pbph);
     CPBaaSBlockHeader pbbh2;
+
     int32_t idx = GetPBaaSHeader(pbbh2, ASSETCHAINS_CHAINID);
     if (idx != -1)
     {
@@ -74,29 +75,16 @@ uint256 CBlockHeader::GetVerusV2Hash() const
             // in order for this to work, the PBaaS hash of the pre-header must match the header data
             // otherwise, it cannot clear the canonical data and hash in a chain-independent manner
             int pbaasType = CConstVerusSolutionVector::HasPBaaSHeader(nSolution);
-            //bool debugPrint = false;
-            //if (pbaasType != 0 && solutionVersion == CActivationHeight::SOLUTION_VERUSV5_1)
-            //{
-            //    debugPrint = true;
-            //    printf("%s: version V5_1 header, pbaasType: %d, CheckNonCanonicalData: %d\n", __func__, pbaasType, CheckNonCanonicalData());
-            //}
+            bool debugPrint = false;
+
             if (pbaasType != 0 && CheckNonCanonicalData())
             {
                 CBlockHeader bh = CBlockHeader(*this);
                 bh.ClearNonCanonicalData();
-                //if (debugPrint)
-                //{
-                //    printf("%s\n", SerializeVerusHashV2b(bh, solutionVersion).GetHex().c_str());
-                //    printf("%s\n", SerializeVerusHashV2b(*this, solutionVersion).GetHex().c_str());
-                //}
                 return SerializeVerusHashV2b(bh, solutionVersion);
             }
             else
             {
-                //if (debugPrint)
-                //{
-                //    printf("%s\n", SerializeVerusHashV2b(*this, solutionVersion).GetHex().c_str());
-                //}
                 return SerializeVerusHashV2b(*this, solutionVersion);
             }
         }

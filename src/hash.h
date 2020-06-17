@@ -341,12 +341,16 @@ public:
                    const unsigned char *personal=BLAKE2Bpersonal) : 
                    nType(nTypeIn), nVersion(nVersionIn)
     {
-        assert(crypto_generichash_blake2b_init_salt_personal(
+        if (crypto_generichash_blake2b_init_salt_personal(
             &state,
             NULL, 0, // No key.
             32,
             NULL,    // No salt.
-            personal) == 0);
+            personal) != 0)
+        {
+            printf("%s: failed to initialize Blake2b state\n", __func__);
+            assert(false);
+        }
     }
 
     int GetType() const { return nType; }

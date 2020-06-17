@@ -9,6 +9,8 @@
 #include "solutiondata.h"
 #include <pybind11/pybind11.h>
 
+#include <sstream>
+
 namespace py = pybind11;
 
 bool initialized = false;
@@ -19,6 +21,7 @@ void initialize()
     {
         CVerusHash::init();
         CVerusHashV2::init();
+        sodium_init();
     }
     initialized = true;
 }
@@ -85,6 +88,7 @@ py::bytes verushash_v2b2(const std::string bytes)
 
     CBlockHeader bh;
     CDataStream s(bytes.data(), bytes.data() + bytes.size(), SER_GETHASH, 0);
+
     try
     {
         s >> bh;
@@ -93,6 +97,7 @@ py::bytes verushash_v2b2(const std::string bytes)
     catch(const std::exception& e)
     {
     }
+
     return py::bytes((char *)&result, 32);
 }
 

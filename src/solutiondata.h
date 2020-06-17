@@ -9,6 +9,17 @@
 #include "limits.h"
 #include "hash.h"
 #include "streams.h"
+#include "tinyformat.h"
+
+inline std::string HexBytes(const unsigned char *buf, int size)
+{
+    std::stringstream ss;
+    for (int l = 0; l < size; l++)
+    {
+        ss << strprintf("%02x", *(buf + l));
+    }
+    return ss.str();
+}
 
 class CPBaaSBlockHeader;
 

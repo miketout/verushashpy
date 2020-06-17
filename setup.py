@@ -92,7 +92,8 @@ class BuildExt(build_ext):
                  '-fexceptions',
                  '-Ofast',
                  '-march=native',
-                 '-Wno-reorder'],
+                 '-Wno-reorder',
+                 '-g'],
     }
     l_opts = {
         'msvc': [],
