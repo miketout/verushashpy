@@ -3,7 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "crypto/utilstrencodings.h"
 #include "solutiondata.h"
+
+CActivationHeight CConstVerusSolutionVector::activationHeight;
+uint160 ASSETCHAINS_CHAINID = uint160(ParseHex("4c6c9b5a9f7f31d8ea604cb49ad3645c01b8f51a"));
 
 [[noreturn]] void new_handler_terminate()
 {
@@ -17,6 +21,42 @@
     // The log was successful, terminate now.
     std::terminate();
 };
+
+// checks that the solution stored data for this header matches what is expected, ensuring that the
+// values in the header match the hash of the pre-header.
+bool CBlockHeader::CheckNonCanonicalData() const
+{
+    CPBaaSPreHeader pbph(*this);
+    CPBaaSBlockHeader pbbh1 = CPBaaSBlockHeader(ASSETCHAINS_CHAINID, pbph);
+    CPBaaSBlockHeader pbbh2;
+    int32_t idx = GetPBaaSHeader(pbbh2, ASSETCHAINS_CHAINID);
+    if (idx != -1)
+    {
+        if (pbbh1.hashPreHeader == pbbh2.hashPreHeader)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// checks that the solution stored data for this header matches what is expected, ensuring that the
+// values in the header match the hash of the pre-header.
+bool CBlockHeader::CheckNonCanonicalData(uint160 &cID) const
+{
+    CPBaaSPreHeader pbph(*this);
+    CPBaaSBlockHeader pbbh1 = CPBaaSBlockHeader(cID, pbph);
+    CPBaaSBlockHeader pbbh2;
+    int32_t idx = GetPBaaSHeader(pbbh2, cID);
+    if (idx != -1)
+    {
+        if (pbbh1.hashPreHeader == pbbh2.hashPreHeader)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 uint256 CBlockHeader::GetVerusV2Hash() const
 {
@@ -67,6 +107,32 @@ uint256 CBlockHeader::GetVerusV2Hash() const
     }
 }
 
+// returns -1 on failure, upon failure, pbbh is undefined and likely corrupted
+int32_t CBlockHeader::GetPBaaSHeader(CPBaaSBlockHeader &pbh, const uint160 &cID) const
+{
+    // find the specified PBaaS header in the solution and return its index if present
+    // if not present, return -1
+    if (nVersion == VERUS_V2)
+    {
+        // search in the solution for this header index and return it if found
+        CPBaaSSolutionDescriptor d = CVerusSolutionVector::solutionTools.GetDescriptor(nSolution);
+        if (CVerusSolutionVector::solutionTools.HasPBaaSHeader(nSolution) != 0)
+        {
+            int32_t numHeaders = d.numPBaaSHeaders;
+            const CPBaaSBlockHeader *ppbbh = CVerusSolutionVector::solutionTools.GetFirstPBaaSHeader(nSolution);
+            for (int32_t i = 0; i < numHeaders; i++)
+            {
+                if ((ppbbh + i)->chainID == cID)
+                {
+                    pbh = *(ppbbh + i);
+                    return i;
+                }
+            }
+        }
+    }
+    return -1;
+}
+
 CPBaaSPreHeader::CPBaaSPreHeader(const CBlockHeader &bh)
 {
     hashPrevBlock = bh.hashPrevBlock;
@@ -80,4 +146,14 @@ CPBaaSPreHeader::CPBaaSPreHeader(const CBlockHeader &bh)
         hashPrevMMRRoot = descr.hashPrevMMRRoot;
         hashBlockMMRRoot = descr.hashBlockMMRRoot;
     }
+}
+
+CPBaaSBlockHeader::CPBaaSBlockHeader(const uint160 &cID, const CPBaaSPreHeader &pbph) : chainID(cID)
+{
+    CBLAKE2bWriter hw(SER_GETHASH, 0);
+
+    // all core data besides version, and solution, which are shared across all headers 
+    hw << pbph;
+
+    hashPreHeader = hw.GetHash();
 }

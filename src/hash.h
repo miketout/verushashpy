@@ -10,6 +10,7 @@
 #include "crypto/sha256.h"
 #include "crypto/verus_hash.h"
 #include "crypto/uint256.h"
+#include "sodium.h"
 #include "prevector.h"
 #include "serialize.h"
 #include <vector>
@@ -317,6 +318,54 @@ public:
 
     template<typename T>
     CVerusHashV2bWriter& operator<<(const T& obj) {
+        // Serialize to this stream
+        ::Serialize(*this, obj);
+        return (*this);
+    }
+};
+
+const unsigned char BLAKE2Bpersonal[crypto_generichash_blake2b_PERSONALBYTES]={'V','e','r','u','s','D','e','f','a','u','l','t','H','a','s','h'};
+
+/** A writer stream (for serialization) that computes a 256-bit BLAKE2b hash. */
+class CBLAKE2bWriter
+{
+private:
+    crypto_generichash_blake2b_state state;
+
+public:
+    int nType;
+    int nVersion;
+
+    CBLAKE2bWriter(int nTypeIn, 
+                   int nVersionIn,
+                   const unsigned char *personal=BLAKE2Bpersonal) : 
+                   nType(nTypeIn), nVersion(nVersionIn)
+    {
+        assert(crypto_generichash_blake2b_init_salt_personal(
+            &state,
+            NULL, 0, // No key.
+            32,
+            NULL,    // No salt.
+            personal) == 0);
+    }
+
+    int GetType() const { return nType; }
+    int GetVersion() const { return nVersion; }
+
+    CBLAKE2bWriter& write(const char *pch, size_t size) {
+        crypto_generichash_blake2b_update(&state, (const unsigned char*)pch, size);
+        return (*this);
+    }
+
+    // invalidates the object
+    uint256 GetHash() {
+        uint256 result;
+        crypto_generichash_blake2b_final(&state, (unsigned char*)&result, 32);
+        return result;
+    }
+
+    template<typename T>
+    CBLAKE2bWriter& operator<<(const T& obj) {
         // Serialize to this stream
         ::Serialize(*this, obj);
         return (*this);

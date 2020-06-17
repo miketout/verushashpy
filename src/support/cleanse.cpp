@@ -3,11 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
+#include <iostream>
+#include <cstring>
 #include "cleanse.h"
-
-#include <openssl/crypto.h>
 
 void memory_cleanse(void *ptr, size_t len)
 {
-    OPENSSL_cleanse(ptr, len);
+    std::memset(ptr, 0, len);
 }

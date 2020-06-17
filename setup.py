@@ -28,6 +28,7 @@ ext_modules = [
          'src/compat/glibc_sanity.cpp',
          'src/compat/glibcxx_sanity.cpp',
          'src/compat/strnlen.cpp',
+         'src/crypto/haraka.c',
          'src/crypto/haraka_portable.c',
          'src/crypto/ripemd160.cpp',
          'src/crypto/sha256.cpp',
@@ -87,7 +88,8 @@ class BuildExt(build_ext):
                  '-fPIC',
                  '-fexceptions',
                  '-Ofast',
-                 '-march=native'],
+                 '-march=native',
+                 '-Wno-reorder'],
     }
     l_opts = {
         'msvc': [],
