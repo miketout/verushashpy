@@ -47,7 +47,7 @@ ext_modules = [
             get_pybind_include(user=True)
         ],
         extra_objects=[
-            glob.glob('/usr/lib/**/libsodium.so/*', recursive=True)[0]
+            glob.glob('/usr/lib/**/libsodium.so*', recursive=True)[0]
         ],
         language='c++'
     ),
